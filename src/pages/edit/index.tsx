@@ -7,20 +7,19 @@ import {AnimationForm, AnimationFormDataType} from 'src/components/AnimationForm
 import {ANIMATIONS, DEFAULT_FORM} from 'src/params'
 
 export const EditPage: React.FC = () => {
-  const [selectedElem, setSelectedElem] = useState<string>('')
   const [form, setForm] = useState<AnimationFormDataType>(DEFAULT_FORM)
   const editableAreaRef = useRef<HTMLDivElement>(null)
   const selectionRef = useRef<HTMLDivElement>(null)
   const changedElems = useRef<{[key: string]: AnimationFormDataType}>({})
 
   const deselectElem = () => {
-    setSelectedElem((prev) => {
+    setForm((prev) => {
       // Возвращаем элементу видимость когда снимаем с него выделение
       if (prev) {
-        makeVisible(document.getElementById(prev))
+        makeVisible(document.getElementById(prev.elemId))
       }
 
-      return ''
+      return DEFAULT_FORM
     })
 
     const selection = selectionRef.current
@@ -37,7 +36,7 @@ export const EditPage: React.FC = () => {
   }
 
   const onClickElem = (id: string) => {
-    /* setForm((prev) => {
+    setForm((prev) => {
       if (prev.elemId) {
         makeVisible(document.getElementById(prev.elemId))
       }
@@ -47,22 +46,7 @@ export const EditPage: React.FC = () => {
       } else {
         return {...DEFAULT_FORM, elemId: id}
       }
-    }) */
-
-    setSelectedElem((prev) => {
-      // Возвращаем элементу видимость когда снимаем с него выделение
-      if (prev) {
-        makeVisible(document.getElementById(prev))
-      }
-
-      return id
     })
-
-    if (changedElems.current[id]) {
-      setForm(changedElems.current[id])
-    } else {
-      setForm(DEFAULT_FORM)
-    }
 
     const selection = selectionRef.current
     const elem = document.getElementById(id)
@@ -82,10 +66,10 @@ export const EditPage: React.FC = () => {
   const onChangeForm = (id: string, value: string | boolean) => {
     setForm((prev: any) => ({...prev, [id]: value}))
 
-    if (changedElems.current[selectedElem]) {
-      changedElems.current[selectedElem] = {...changedElems.current[selectedElem], [id]: value}
+    if (changedElems.current[form.elemId]) {
+      changedElems.current[form.elemId] = {...changedElems.current[form.elemId], [id]: value}
     } else {
-      changedElems.current[selectedElem] = {...DEFAULT_FORM, [id]: value}
+      changedElems.current[form.elemId] = {...DEFAULT_FORM, elemId: form.elemId, [id]: value}
     }
 
     localStorage.setItem(ANIMATIONS, JSON.stringify(changedElems.current))
@@ -100,7 +84,8 @@ export const EditPage: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const elemToShow = document.getElementById(selectedElem)
+    // Когда пользователь переключает показывание начального состояния элемента
+    const elemToShow = document.getElementById(form.elemId)
 
     if (elemToShow) {
       elemToShow.style.opacity = form.showInitialState ? '1' : '0'
@@ -113,11 +98,11 @@ export const EditPage: React.FC = () => {
       <Main>
         <Editor>
           <EdtableArea ref={editableAreaRef} onClick={deselectElem}>
-            <StyledPageContent onClickElem={onClickElem} $selectedElem={selectedElem} />
+            <StyledPageContent onClickElem={onClickElem} />
             <StyledSelection ref={selectionRef} $form={form} />
           </EdtableArea>
         </Editor>
-        <SideBar>{selectedElem && <AnimationForm form={form} onChange={onChangeForm} />}</SideBar>
+        <SideBar>{form.elemId && <AnimationForm form={form} onChange={onChangeForm} />}</SideBar>
       </Main>
     </Block>
   )
@@ -176,7 +161,7 @@ const EdtableArea = styled.div`
   height: 498px;
   position: relative;
 `
-const StyledPageContent = styled(PageContent)<{$selectedElem: string}>`
+const StyledPageContent = styled(PageContent)`
   .selected {
     position: relative;
 
