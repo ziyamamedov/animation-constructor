@@ -1,7 +1,7 @@
 import styled, {css, keyframes} from 'styled-components'
 import {AppButton} from 'src/components/AppButton'
 import {MouseEventHandler} from 'react'
-import {AnimationFormDataType} from '../AnimationForm'
+import {AnimationFormDataType} from 'src/params/'
 
 type Props = {
   onClickElem?: (id: string) => void

@@ -1,10 +1,10 @@
 import {useLayoutEffect, useState} from 'react'
 import {PageContent} from 'src/components/PageContent'
-import {ANIMATIONS} from 'src/params'
+import {ANIMATIONS, TElementsAnimations} from 'src/params'
 import styled from 'styled-components'
 
 export const PreviewPage: React.FC = () => {
-  const [anims, setAnims] = useState()
+  const [anims, setAnims] = useState<TElementsAnimations>()
 
   useLayoutEffect(() => {
     const animsJson = localStorage.getItem(ANIMATIONS)

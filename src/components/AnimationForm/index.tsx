@@ -3,27 +3,13 @@ import styled from 'styled-components'
 import {AppInputRange} from '../UI/AppInputRange'
 import {AppSwitch} from '../UI/AppSwitch'
 import {AppSelect} from '../UI/AppSelect'
-import {EASING_VALUES} from 'src/params'
+import {AnimationFormDataType, EASING_VALUES} from 'src/params'
 import {AppButton} from '../AppButton'
 import {ModalConfirmReset} from '../ModalConfirmReset'
 import {useDebounceFn} from 'src/hooks/usDebounceFn'
 import {ValueType} from 'react-bezier-curve-editor'
 
 const AppBezierCurve = lazy(() => import('../UI/AppBezierCurve').then((module) => ({default: module.AppBezierCurve})))
-
-export type AnimationFormDataType = {
-  elemId: string
-  translateX: number
-  translateY: number
-  opacity: number
-  scale: number
-  blur: number
-  speed: number
-  delay: number
-  easing: string
-  replay: boolean
-  showInitialState: boolean
-}
 
 type Props = {
   form: AnimationFormDataType

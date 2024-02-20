@@ -1,3 +1,19 @@
+export type AnimationFormDataType = {
+  elemId: string
+  translateX: number
+  translateY: number
+  opacity: number
+  scale: number
+  blur: number
+  speed: number
+  delay: number
+  easing: string
+  replay: boolean
+  showInitialState: boolean
+}
+export type TElementsAnimations = {
+  [key: string]: AnimationFormDataType
+}
 export const DEFAULT_FORM = {
   elemId: '',
   translateX: 0,

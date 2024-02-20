@@ -3,19 +3,18 @@ import {Header} from 'src/components/Header'
 import {PageContent} from 'src/components/PageContent'
 import {useEffect, useRef, useState} from 'react'
 import {SelectionOutline} from 'src/components/SelectionOutline'
-import {AnimationForm, AnimationFormDataType} from 'src/components/AnimationForm'
-import {ANIMATIONS, DEFAULT_FORM} from 'src/params'
+import {AnimationForm} from 'src/components/AnimationForm'
+import {ANIMATIONS, AnimationFormDataType, DEFAULT_FORM, TElementsAnimations} from 'src/params'
 
 export const EditPage: React.FC = () => {
   const [form, setForm] = useState<AnimationFormDataType>(DEFAULT_FORM)
   const editableAreaRef = useRef<HTMLDivElement>(null)
   const selectionRef = useRef<HTMLDivElement>(null)
-  const changedElems = useRef<{[key: string]: AnimationFormDataType}>({})
+  const changedElems = useRef<TElementsAnimations>({})
 
   const deselectElem = () => {
     setForm((prev) => {
-      // Возвращаем элементу видимость когда снимаем с него выделение
-      if (prev) {
+      if (prev.elemId) {
         makeVisible(document.getElementById(prev.elemId))
       }
 
@@ -58,7 +57,18 @@ export const EditPage: React.FC = () => {
         selection?.removeChild(selectionLastChild)
       }
 
-      selectElem(elem, selectionRef.current)
+      // Below we create a clone of a selected element and put it inside our selection
+      const elemsRect = elem.getBoundingClientRect()
+      const newElem = elem && (elem.cloneNode(true) as HTMLElement)
+
+      selection.style.display = 'block'
+      selection.style.position = 'fixed'
+      selection.style.top = `${elemsRect.top - 1}px` // we puts selection(and elems clone inside it) at the same place as the original elem
+      selection.style.left = `${elemsRect.left - 1}px`
+      newElem.style.margin = '0'
+      selection.appendChild(newElem)
+
+      // We hide our original elem
       makeInvisible(elem)
     }
   }
@@ -72,6 +82,7 @@ export const EditPage: React.FC = () => {
       changedElems.current[form.elemId] = {...DEFAULT_FORM, elemId: form.elemId, [id]: value}
     }
 
+    // write to local storage, so we can pick it from other page
     localStorage.setItem(ANIMATIONS, JSON.stringify(changedElems.current))
   }
 
@@ -114,18 +125,6 @@ export const EditPage: React.FC = () => {
       </Main>
     </Block>
   )
-}
-
-const selectElem = (elem: HTMLElement, selection: HTMLDivElement) => {
-  const elemsRect = elem.getBoundingClientRect()
-  const newElem = elem && (elem.cloneNode(true) as HTMLElement)
-
-  selection.style.display = 'block'
-  selection.style.position = 'fixed'
-  selection.style.top = `${elemsRect.top - 1}px`
-  selection.style.left = `${elemsRect.left - 1}px`
-  newElem.style.margin = '0'
-  selection.appendChild(newElem)
 }
 
 const makeInvisible = (elem: HTMLElement) => {
