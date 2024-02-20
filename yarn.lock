@@ -697,6 +697,11 @@ chalk@^4.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
+classnames@^2.2.6:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.5.1.tgz#ba774c614be0f016da105c858e7159eae8e7687b"
+  integrity sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==
+
 color-convert@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-2.0.1.tgz#72d3a68d598c9bdb3af2ad1e84f21d896abd4de3"
@@ -1877,6 +1882,13 @@ queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
+
+react-bezier-curve-editor@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-bezier-curve-editor/-/react-bezier-curve-editor-2.0.0.tgz#04c3abe63c5b5a75e7a94c9131750316483cd9c8"
+  integrity sha512-wHZoEqtlkfjRMD3nYdLAFE+mT/nEBeDu72/phLvPnHbQFHT4fATcnqnmHE903B0y0OIU8I/NPbikqA/8Fsub8g==
+  dependencies:
+    classnames "^2.2.6"
 
 react-dom@^18.2.0:
   version "18.2.0"

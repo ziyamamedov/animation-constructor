@@ -49,11 +49,15 @@ const SelectWrapper = styled.div`
 const StyledSelect = styled.div`
   position: relative;
   cursor: pointer;
-
+  display: flex;
   text-transform: capitalize;
 `
 const Title = styled.span`
   margin-right: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 126px;
 `
 const DropdownList = styled.ul`
   position: absolute;

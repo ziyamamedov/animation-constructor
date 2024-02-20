@@ -12,5 +12,7 @@ export const DEFAULT_FORM = {
   showInitialState: false,
 }
 
+export const EASING_VALUES = ['ease-in', 'ease', 'ease-out', 'cubic-bezier', 'ease-in-out', 'linear', 'step-start', 'step-end']
+
 export const ANIMATIONS = 'animations'
 

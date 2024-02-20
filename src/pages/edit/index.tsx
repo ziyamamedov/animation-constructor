@@ -75,6 +75,14 @@ export const EditPage: React.FC = () => {
     localStorage.setItem(ANIMATIONS, JSON.stringify(changedElems.current))
   }
 
+  const onResetForm = () => {
+    const newForm = {...DEFAULT_FORM, elemId: form.elemId}
+
+    changedElems.current[form.elemId] = newForm
+    localStorage.setItem(ANIMATIONS, JSON.stringify(changedElems.current))
+    setForm((prev: any) => ({...DEFAULT_FORM, elemId: prev.elemId}))
+  }
+
   useEffect(() => {
     const lSAnimations = localStorage.getItem(ANIMATIONS)
 
@@ -102,7 +110,7 @@ export const EditPage: React.FC = () => {
             <StyledSelection ref={selectionRef} $form={form} />
           </EdtableArea>
         </Editor>
-        <SideBar>{form.elemId && <AnimationForm form={form} onChange={onChangeForm} />}</SideBar>
+        <SideBar>{form.elemId && <AnimationForm form={form} onChange={onChangeForm} onResetForm={onResetForm} />}</SideBar>
       </Main>
     </Block>
   )

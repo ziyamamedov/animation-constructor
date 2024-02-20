@@ -1,8 +1,15 @@
-import {ChangeEventHandler, ReactNode} from 'react'
+import {ChangeEventHandler, ReactNode, Suspense, lazy, useState} from 'react'
 import styled from 'styled-components'
 import {AppInputRange} from '../UI/AppInputRange'
 import {AppSwitch} from '../UI/AppSwitch'
 import {AppSelect} from '../UI/AppSelect'
+import {EASING_VALUES} from 'src/params'
+import {AppButton} from '../AppButton'
+import {ModalConfirmReset} from '../ModalConfirmReset'
+import {useDebounceFn} from 'src/hooks/usDebounceFn'
+import {ValueType} from 'react-bezier-curve-editor'
+
+const AppBezierCurve = lazy(() => import('../UI/AppBezierCurve').then((module) => ({default: module.AppBezierCurve})))
 
 export type AnimationFormDataType = {
   elemId: string
@@ -21,9 +28,19 @@ export type AnimationFormDataType = {
 type Props = {
   form: AnimationFormDataType
   onChange: (id: string, value: string | boolean) => void
+  onResetForm: () => void
 }
 
-export const AnimationForm: React.FC<Props> = ({form, onChange}) => {
+export const AnimationForm: React.FC<Props> = ({form, onChange, onResetForm}) => {
+  const [showCubicBezier, setShowCubicBezier] = useState(false)
+  const [modalConfirmReset, setModalConfirmReset] = useState(false)
+  const debouncedBezierFn = useDebounceFn((value: ValueType) => {
+    const formattedBezier = `cubic-bezier(${value.map((num) => Number(num.toFixed(2))).join(',')})`
+
+    console.log('🚀 ~ debouncedBezierFn ~ formattedBezier:', formattedBezier.match(/[0-9.]+/g)?.map(Number))
+    onChange('easing', formattedBezier)
+  }, 300)
+
   const onChangeInput: ChangeEventHandler<HTMLInputElement> = (e) => {
     onChange(e.target.name, e.target.value)
   }
@@ -33,7 +50,17 @@ export const AnimationForm: React.FC<Props> = ({form, onChange}) => {
   }
 
   const onChangeEasing = (name: string, value: string) => {
-    onChange(name, value)
+    if (value === 'cubic-bezier') {
+      if (!form.easing.startsWith('cubic-bezier')) {
+        onChange('easing', 'cubic-bezier(0, 0.5, 1, 0.5)')
+      }
+      setShowCubicBezier(true)
+    } else {
+      onChange(name, value)
+    }
+  }
+  const onClickReset = () => {
+    setModalConfirmReset(true)
   }
 
   return (
@@ -60,12 +87,16 @@ export const AnimationForm: React.FC<Props> = ({form, onChange}) => {
         <StyledAppInputRange name="delay" max={10} min={0} step={0.5} value={form.delay} onChange={onChangeInput} />
       </FormElem>
       <FormElem label="Easing">
-        <AppSelect
-          options={['ease-in', 'ease', 'ease-out', 'ease-in-out', 'linear', 'step-start', 'step-end']}
-          value={form.easing}
-          name="easing"
-          onChange={onChangeEasing}
-        />
+        <AppSelect options={EASING_VALUES} value={form.easing} name="easing" onChange={onChangeEasing} />
+        {showCubicBezier && (
+          <Suspense>
+            <StyledAppBezierCurve
+              onChange={debouncedBezierFn}
+              formValue={form.easing}
+              onClose={() => setShowCubicBezier(false)}
+            />
+          </Suspense>
+        )}
       </FormElem>
       <FormElem label="Replay">
         <AppSwitch name="replay" checked={form.replay} onChange={onChangeBoolean} />
@@ -74,6 +105,12 @@ export const AnimationForm: React.FC<Props> = ({form, onChange}) => {
         <AppSwitch name="showInitialState" checked={form.showInitialState} onChange={onChangeBoolean} />
         <InitialStateLabel>Show Initial State</InitialStateLabel>
       </FormElemWrap>
+      <StyledAppButton type="button" onClick={onClickReset}>
+        Reset
+      </StyledAppButton>
+      {modalConfirmReset && (
+        <ModalConfirmReset isOpen={modalConfirmReset} onClose={() => setModalConfirmReset(false)} onConfirm={onResetForm} />
+      )}
     </Block>
   )
 }
@@ -100,6 +137,7 @@ const FormElemWrap = styled.div`
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 16px;
+  position: relative;
 
   &:last-child {
     margin-bottom: 0;
@@ -124,5 +162,18 @@ const Value = styled.span`
 `
 const StyledAppInputRange = styled(AppInputRange)`
   width: 118px;
+`
+const StyledAppButton = styled(AppButton)`
+  width: 100px;
+`
+
+const StyledAppBezierCurve = styled(AppBezierCurve)`
+  position: absolute !important;
+  top: 100%;
+  right: -5px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 1;
 `
 
