@@ -26,6 +26,10 @@ function App() {
 }
 
 const GlobalStyle = createGlobalStyle`
+  html {
+    overflow: hidden;
+  }
+
   html, body {
     height: 100%;
   }
@@ -36,3 +40,4 @@ const GlobalStyle = createGlobalStyle`
 `
 
 export default App
+

@@ -25,8 +25,9 @@ export const EditPage: React.FC = () => {
 
     if (selection) {
       const selectionLastChild: HTMLElement = selection.lastChild as any
+      const lastChildDataId = selectionLastChild.getAttribute('data-id')
 
-      if (selectionLastChild.id) {
+      if (lastChildDataId) {
         selection.removeChild(selectionLastChild)
       }
 
@@ -35,6 +36,35 @@ export const EditPage: React.FC = () => {
   }
 
   const onClickElem = (id: string) => {
+    const selection = selectionRef.current
+    const elem = document.getElementById(id)
+
+    if (elem && selection) {
+      const selectionLastChild: HTMLElement = selection?.lastChild as HTMLElement
+      const lastChildDataId = selectionLastChild.getAttribute('data-id')
+
+      // Here we check if last child of selection is another elem
+      if (lastChildDataId && lastChildDataId !== id) {
+        selection?.removeChild(selectionLastChild)
+      }
+
+      // Below we create a clone of a selected element and put it inside our selection
+      const elemsRect = elem.getBoundingClientRect()
+      const elemClone = elem && (elem.cloneNode(true) as HTMLElement)
+      elemClone.removeAttribute('id')
+      elemClone.setAttribute('data-id', elem.id)
+
+      selection.style.display = 'block'
+      selection.style.position = 'fixed'
+      selection.style.top = `${elemsRect.top - 1}px` // we puts selection(and elems clone inside it) at the same place as the original elem
+      selection.style.left = `${elemsRect.left - 1}px`
+      elemClone.style.margin = '0'
+      selection.appendChild(elemClone)
+
+      // We hide our original elem
+      makeInvisible(elem)
+    }
+
     setForm((prev) => {
       if (prev.elemId) {
         makeVisible(document.getElementById(prev.elemId))
@@ -46,31 +76,6 @@ export const EditPage: React.FC = () => {
         return {...DEFAULT_FORM, elemId: id}
       }
     })
-
-    const selection = selectionRef.current
-    const elem = document.getElementById(id)
-
-    if (elem && selection) {
-      const selectionLastChild: HTMLElement = selection?.lastChild as any
-
-      if (selectionLastChild.id && selectionLastChild.id !== id) {
-        selection?.removeChild(selectionLastChild)
-      }
-
-      // Below we create a clone of a selected element and put it inside our selection
-      const elemsRect = elem.getBoundingClientRect()
-      const newElem = elem && (elem.cloneNode(true) as HTMLElement)
-
-      selection.style.display = 'block'
-      selection.style.position = 'fixed'
-      selection.style.top = `${elemsRect.top - 1}px` // we puts selection(and elems clone inside it) at the same place as the original elem
-      selection.style.left = `${elemsRect.left - 1}px`
-      newElem.style.margin = '0'
-      selection.appendChild(newElem)
-
-      // We hide our original elem
-      makeInvisible(elem)
-    }
   }
 
   const onChangeForm = (id: string, value: string | boolean) => {

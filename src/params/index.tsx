@@ -11,6 +11,7 @@ export type AnimationFormDataType = {
   replay: boolean
   showInitialState: boolean
 }
+/** Key is an id of an element, value is an animation */
 export type TElementsAnimations = {
   [key: string]: AnimationFormDataType
 }
